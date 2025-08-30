@@ -1,0 +1,70 @@
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+password-manager
+password-manager.exe
+
+# Test binary, built with `go test -c`
+*.test
+
+# Output of the go coverage tool, specifically when used with LiteIDE
+*.out
+
+# Dependency directories (remove the comment below to include it)
+# vendor/
+
+# Go workspace file
+go.work
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Local environment files
+.env
+.env.local
+.env.*.local
+
+# Log files
+*.log
+logs/
+
+# Password store directory (should never be committed for security)
+.password-manager-store/
+*.password-manager-store/
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# OS generated files
+Thumbs.db
+ehthumbs.db
+.DS_Store?
+Icon?
+
+# Build artifacts
+dist/
+build/
+bin/
+
+# Coverage reports
+coverage.txt
+coverage.html
+coverage.xml
+
+# Profiling data
+*.prof
+*.pprof
+
+# Air live reload tool (if used)
+.air.toml
+tmp/
