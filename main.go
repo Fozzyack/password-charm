@@ -93,9 +93,12 @@ func handleMenuAction(action string, menu *menus.Menu) {
 		// Success message is handled within AddNewPassword
 
 	case "change_master":
-		fmt.Println("🔄 Changing master password...")
-		fmt.Println("This feature is coming soon!")
-		waitForEnter()
+		_, err := menu.ChangeMasterPassword()
+		if err != nil {
+			fmt.Print("\033[2J\033[H") // Clear screen
+			fmt.Printf("❌ Error changing master password: %v\n\n", err)
+			waitForEnter()
+		}
 
 	case "export":
 		fmt.Println("📤 Exporting passwords...")

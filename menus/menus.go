@@ -15,6 +15,7 @@ import (
 	"github.com/Fozzyack/password-manager/ui/list"
 	"github.com/Fozzyack/password-manager/ui/detail"
 	"github.com/Fozzyack/password-manager/ui/confirm"
+	"github.com/Fozzyack/password-manager/ui/change"
 	"github.com/Fozzyack/password-manager/utils"
 	tea "github.com/charmbracelet/bubbletea"
 )
@@ -33,7 +34,7 @@ func InitMenus(pf *fileio.PasswordFolder, ef *encryption.EncryptionFunctions, op
 	return &Menu{
 		passwordFolder:      pf,
 		encryptionFunctions: ef,
-		Options:                options,
+		Options:             options,
 	}
 }
 
@@ -420,4 +421,102 @@ func (m *Menu) getAllPasswordEntries() ([]list.PasswordEntry, error) {
 	}
 	
 	return entries, nil
+}
+
+// ChangeMasterPassword handles the master password change workflow.
+// Returns true if password was changed successfully, false if cancelled or failed.
+func (m *Menu) ChangeMasterPassword() (bool, error) {
+	// Clear any previous error messages
+	m.Options.ErrorMessage = ""
+
+	// Show the change password form
+	changeForm := change.NewChangePasswordForm(m.Options)
+	p := tea.NewProgram(changeForm)
+	
+	finalModel, err := p.Run()
+	if err != nil {
+		return false, fmt.Errorf("error running change password form: %v", err)
+	}
+	
+	formModel := finalModel.(change.ChangeModel)
+	
+	// Check if form was cancelled
+	if formModel.IsCancelled() {
+		return false, nil // Not an error, just cancelled
+	}
+	
+	// Check if form was submitted successfully
+	if !formModel.IsSubmitted() {
+		return false, nil // Form not completed
+	}
+	
+	// Get form data
+	currentPass, newPass, _ := formModel.GetFormData()
+	
+	// Step 1: Verify current password by trying to decrypt init.gpg
+	oldPassword := m.passwordFolder.Password // Store original password
+	m.passwordFolder.Password = currentPass  // Temporarily set to verify
+	
+	validationData, err := m.encryptionFunctions.DecryptPasswordFromFile(".checker/init")
+	if err != nil {
+		// Restore original password
+		m.passwordFolder.Password = oldPassword
+		
+		fmt.Print("\033[2J\033[H") // Clear screen
+		fmt.Printf("❌ Error: Current password is incorrect\n\n")
+		fmt.Println("Press Enter to continue...")
+		fmt.Scanln()
+		return false, nil
+	}
+	
+	// Step 2: Re-encrypt the validation data with new master password
+	m.passwordFolder.Password = newPass // Set new password for encryption
+	
+	// Update the timestamp to reflect the password change
+	validationData.UpdatedAt = time.Now()
+	
+	err = m.encryptionFunctions.EncryptPasswordAndWriteToFile(".checker/init", validationData)
+	if err != nil {
+		// Restore original password on failure
+		m.passwordFolder.Password = oldPassword
+		
+		fmt.Print("\033[2J\033[H") // Clear screen
+		fmt.Printf("❌ Error saving new master password: %v\n\n", err)
+		fmt.Println("Press Enter to continue...")
+		fmt.Scanln()
+		return false, nil
+	}
+	
+	// Step 3: Test that we can decrypt with the new password
+	testData, err := m.encryptionFunctions.DecryptPasswordFromFile(".checker/init")
+	if err != nil {
+		// This shouldn't happen, but if it does, we're in trouble
+		fmt.Print("\033[2J\033[H") // Clear screen
+		fmt.Printf("❌ Critical Error: Cannot decrypt with new password. Please check your password store manually.\n\n")
+		fmt.Println("Press Enter to continue...")
+		fmt.Scanln()
+		return false, fmt.Errorf("critical error: new password verification failed: %v", err)
+	}
+	
+	// Verify the validation phrase is still correct
+	if testData.Password != validationData.Password {
+		fmt.Print("\033[2J\033[H") // Clear screen
+		fmt.Printf("❌ Critical Error: Validation data corrupted during password change.\n\n")
+		fmt.Println("Press Enter to continue...")
+		fmt.Scanln()
+		return false, fmt.Errorf("validation data integrity check failed")
+	}
+	
+	// Step 4: Success! Show confirmation message
+	fmt.Print("\033[2J\033[H") // Clear screen
+	fmt.Printf("✅ Master password changed successfully!\n\n")
+	fmt.Printf("Your new master password is now active.\n")
+	fmt.Printf("You will need to use the new password for future logins.\n\n")
+	fmt.Println("Press Enter to continue...")
+	fmt.Scanln()
+	
+	// The new password is already set in m.passwordFolder.Password
+	// so the current session continues to work normally
+	
+	return true, nil
 }

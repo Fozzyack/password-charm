@@ -11,6 +11,7 @@ A secure, terminal-based password manager with a beautiful interface. All your p
 - **Add new passwords** - fill out forms for websites/services  
 - **View your passwords** - browse and reveal passwords when needed
 - **Delete old passwords** - with confirmation to prevent accidents
+- **Change master password** - update your master password safely
 - **Master password protection** - one password to access everything
 
 ## 🚀 Quick Start
@@ -53,7 +54,6 @@ A secure, terminal-based password manager with a beautiful interface. All your p
 
 ## 📝 To Be Added
 
-- **🔄 Change Master Password**: Update your master password  
 - **📤 Export Passwords**: Export to CSV/JSON formats
 - **🔗 Maybe: GitHub Backup**: Encrypted backup to private repos
 
