@@ -88,12 +88,12 @@ func InitialMenuModel(options *types.Options) MenuModel {
 				Action:      "change_master",
 			},
 			{
-				Title:       "☁️ Save to GitHub",
+				Title:       "📤 Save to GitHub",
 				Description: "Back up the encrypted password store",
 				Action:      "github_backup",
 			},
 			{
-				Title:       "⚙️ Configure GitHub",
+				Title:       "🔧 Configure GitHub",
 				Description: "Set the repository used for encrypted backups",
 				Action:      "github_configure",
 			},
