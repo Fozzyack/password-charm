@@ -110,11 +110,6 @@ func handleMenuAction(action string, menu *menus.Menu) {
 			waitForEnter()
 		}
 
-	case "export":
-		fmt.Println("📤 Exporting passwords...")
-		fmt.Println("This feature is coming soon!")
-		waitForEnter()
-
 	case "github_configure", "github_backup":
 		handleGitHubAction(action, menu)
 
