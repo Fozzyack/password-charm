@@ -31,6 +31,16 @@ func main() {
 	}
 	encrypt := encryption.NewEncryption(passwordFolder)
 	menu := menus.InitMenus(passwordFolder, encrypt, options)
+	if !passwordFolder.InitCheck {
+		for !options.Quit {
+			if err := menu.PrepareStore(); err != nil {
+				fmt.Printf("Error preparing password store: %v\n", err)
+				waitForEnter()
+				continue
+			}
+			break
+		}
+	}
 	for !options.LoggedIn && !options.Quit {
 		options.LoggedIn, err = menu.Login()
 		if err != nil {
@@ -104,6 +114,9 @@ func handleMenuAction(action string, menu *menus.Menu) {
 		fmt.Println("📤 Exporting passwords...")
 		fmt.Println("This feature is coming soon!")
 		waitForEnter()
+
+	case "github_configure", "github_backup":
+		handleGitHubAction(action, menu)
 
 	case "quit":
 		// Handled in main loop

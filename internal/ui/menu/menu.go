@@ -21,6 +21,7 @@ type MenuItem struct {
 
 // MenuModel represents the state of the main menu interface
 type MenuModel struct {
+	title        string
 	choices      []MenuItem     // Available menu options
 	cursor       int            // Currently selected menu item index
 	selected     bool           // Whether an item has been selected
@@ -92,6 +93,16 @@ func InitialMenuModel(options *types.Options) MenuModel {
 				Action:      "export",
 			},
 			{
+				Title:       "Save to GitHub",
+				Description: "Back up the encrypted password store",
+				Action:      "github_backup",
+			},
+			{
+				Title:       "Configure GitHub",
+				Description: "Set the repository used for encrypted backups",
+				Action:      "github_configure",
+			},
+			{
 				Title:       "🚪 Quit",
 				Description: "Exit the password manager",
 				Action:      "quit",
@@ -131,6 +142,9 @@ func (m MenuModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "enter", " ":
 			m.selected = true
 			m.selectedItem = m.choices[m.cursor].Action
+			if m.selectedItem == "quit" {
+				m.options.Quit = true
+			}
 			return m, tea.Quit
 		}
 	}
@@ -143,7 +157,11 @@ func (m MenuModel) View() string {
 	var content strings.Builder
 
 	// Title
-	title := titleStyle.Render("🔐 Password Manager - Main Menu")
+	heading := m.title
+	if heading == "" {
+		heading = "🔐 Password Manager - Main Menu"
+	}
+	title := titleStyle.Render(heading)
 	content.WriteString(title + "\n\n")
 
 	// Menu items with consistent width to prevent shifting
