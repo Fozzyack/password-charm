@@ -9,6 +9,7 @@ import (
 	"github.com/Fozzyack/password-manager/internal/encryption"
 	"github.com/Fozzyack/password-manager/internal/types"
 	"github.com/Fozzyack/password-manager/internal/utils"
+	"github.com/atotto/clipboard"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 )
@@ -20,7 +21,14 @@ type DetailModel struct {
 	siteName        string
 	showPassword    bool
 	deleteRequested bool
+	copying         bool
+	copyStatus      string
+	copyErr         error
 	options         *types.Options
+}
+
+type clipboardResultMsg struct {
+	err error
 }
 
 // Detail view styling
@@ -102,6 +110,15 @@ func (m DetailModel) Init() tea.Cmd {
 // Update handles user input for the detail view
 func (m DetailModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
+	case clipboardResultMsg:
+		m.copying = false
+		m.copyErr = msg.err
+		if msg.err != nil {
+			m.copyStatus = fmt.Sprintf("Could not copy password: %v", msg.err)
+		} else {
+			m.copyStatus = "Password copied to clipboard"
+		}
+
 	case tea.KeyMsg:
 		switch msg.String() {
 		case "ctrl+c", "esc", "q", "backspace":
@@ -111,6 +128,18 @@ func (m DetailModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "v", " ":
 			// Toggle password visibility
 			m.showPassword = !m.showPassword
+
+		case "c", "C":
+			if m.copying {
+				return m, nil
+			}
+			m.copying = true
+			m.copyErr = nil
+			m.copyStatus = "Copying password..."
+			password := m.entry.Password
+			return m, func() tea.Msg {
+				return clipboardResultMsg{err: clipboard.WriteAll(password)}
+			}
 
 		case "d", "D":
 			// Request deletion
@@ -190,6 +219,18 @@ func (m DetailModel) View() string {
 			passwordHiddenStyle.Render("Press 'v' or Space to reveal password") + "\n\n"
 	}
 
+	// Clipboard action and feedback remain available while the password is hidden.
+	copyStatus := m.copyStatus
+	copyStyle := passwordHiddenStyle
+	if copyStatus == "" {
+		copyStatus = "Press 'c' to copy password"
+	} else if m.copyErr != nil {
+		copyStyle = fieldValueStyle.Foreground(lipgloss.Color("#FF5F87"))
+	} else if !m.copying {
+		copyStyle = fieldValueStyle.Foreground(lipgloss.Color("#90EE90"))
+	}
+	detailContent += fieldLabelStyle.Render("Clipboard:") + copyStyle.Width(50).Render(copyStatus) + "\n\n"
+
 	// File information
 	detailContent += "─" + strings.Repeat("─", 60) + "\n\n"
 
@@ -210,9 +251,9 @@ func (m DetailModel) View() string {
 	// Help text
 	var helpText string
 	if m.showPassword {
-		helpText = "v/Space: Hide Password • d: Delete • Esc/q/Backspace: Back to List • Enter: Back to List"
+		helpText = "v/Space: Hide Password • c: Copy Password • d: Delete\nEsc/q/Backspace/Enter: Back to List"
 	} else {
-		helpText = "v/Space: Show Password • d: Delete • Esc/q/Backspace: Back to List • Enter: Back to List"
+		helpText = "v/Space: Show Password • c: Copy Password • d: Delete\nEsc/q/Backspace/Enter: Back to List"
 	}
 
 	help := detailHelpStyle.Render(helpText)
