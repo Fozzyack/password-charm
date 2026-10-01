@@ -10,6 +10,7 @@ import (
 	"github.com/Fozzyack/password-manager/internal/encryption"
 	"github.com/Fozzyack/password-manager/internal/fileio"
 	"github.com/Fozzyack/password-manager/internal/types"
+	"github.com/Fozzyack/password-manager/internal/ui"
 	"github.com/Fozzyack/password-manager/internal/ui/change"
 	"github.com/Fozzyack/password-manager/internal/ui/confirm"
 	"github.com/Fozzyack/password-manager/internal/ui/detail"
@@ -58,12 +59,12 @@ func (menu *Menu) Login() (bool, error) {
 	menu.Options.ErrorMessage = ""
 
 	var err error
-	p := tea.NewProgram(textinput.InitialModelWithMasking("Welcome, please type in your Master password", "Password", &menu.passwordFolder.Password, menu.Options, false))
+	var p tea.Model = textinput.InitialModelWithMasking("Welcome, please type in your Master password", "Password", &menu.passwordFolder.Password, menu.Options, false)
 
 	if !menu.passwordFolder.InitCheck {
 		// Validate master password (visible during setup)
 		for {
-			_, err = p.Run()
+			_, err = ui.Run(p)
 			if err != nil {
 				return false, err
 			}
@@ -79,15 +80,15 @@ func (menu *Menu) Login() (bool, error) {
 			// Show validation error and prompt again
 			menu.Options.ErrorMessage = errorMsg
 			menu.passwordFolder.Password = "" // Clear invalid password
-			p = tea.NewProgram(textinput.InitialModelWithMasking("Welcome, please type in your Master password", "Password", &menu.passwordFolder.Password, menu.Options, false))
+			p = textinput.InitialModelWithMasking("Welcome, please type in your Master password", "Password", &menu.passwordFolder.Password, menu.Options, false)
 		}
 
 		// Validate phrase
 		phrase := ""
 		for {
 			menu.Options.ErrorMessage = "" // Clear previous errors
-			p = tea.NewProgram(textinput.InitialModel("Type in a Random phrase", "the quick brown fox...", &phrase, menu.Options))
-			_, err = p.Run()
+			p = textinput.InitialModel("Type in a Random phrase", "the quick brown fox...", &phrase, menu.Options)
+			_, err = ui.Run(p)
 			if err != nil {
 				return false, err
 			}
@@ -118,8 +119,8 @@ func (menu *Menu) Login() (bool, error) {
 		menu.passwordFolder.Password = ""
 	}
 
-	p = tea.NewProgram(textinput.InitialModel("Hello Again! Please enter your Password", "Password", &menu.passwordFolder.Password, menu.Options))
-	_, err = p.Run()
+	p = textinput.InitialModel("Hello Again! Please enter your Password", "Password", &menu.passwordFolder.Password, menu.Options)
+	_, err = ui.Run(p)
 	if err != nil {
 		return false, err
 	}
@@ -142,9 +143,7 @@ func (m *Menu) ShowMainMenu() (string, error) {
 
 	// Create and run the main menu
 	mainMenu := menu.InitialMenuModel(m.Options)
-	p := tea.NewProgram(mainMenu)
-
-	finalModel, err := p.Run()
+	finalModel, err := ui.Run(mainMenu)
 	if err != nil {
 		return "", err
 	}
@@ -167,9 +166,7 @@ func (m *Menu) AddNewPassword() (bool, error) {
 
 	// Create and run the password form
 	passwordForm := form.NewPasswordForm(m.Options)
-	p := tea.NewProgram(passwordForm)
-
-	finalModel, err := p.Run()
+	finalModel, err := ui.Run(passwordForm)
 	if err != nil {
 		return false, fmt.Errorf("error running form: %v", err)
 	}
@@ -258,17 +255,14 @@ func (m *Menu) ListAllPasswords() (bool, error) {
 	// If no passwords exist, show empty state and return
 	if len(entries) == 0 {
 		passwordList := list.NewPasswordList(entries, m.Options)
-		p := tea.NewProgram(passwordList)
-		_, err := p.Run()
+		_, err := ui.Run(passwordList)
 		return false, err
 	}
 
 	// Show the password list
 	for {
 		passwordList := list.NewPasswordList(entries, m.Options)
-		p := tea.NewProgram(passwordList)
-
-		finalModel, err := p.Run()
+		finalModel, err := ui.Run(passwordList)
 		if err != nil {
 			return false, fmt.Errorf("error running password list: %v", err)
 		}
@@ -296,9 +290,7 @@ func (m *Menu) ListAllPasswords() (bool, error) {
 
 		// Show password details
 		detailView := detail.NewPasswordDetail(passwordData, selectedEntry.Filename, selectedEntry.SiteName, m.Options)
-		detailProgram := tea.NewProgram(detailView)
-
-		finalDetailModel, err := detailProgram.Run()
+		finalDetailModel, err := ui.Run(detailView)
 		if err != nil {
 			return false, fmt.Errorf("error running password detail view: %v", err)
 		}
@@ -309,9 +301,7 @@ func (m *Menu) ListAllPasswords() (bool, error) {
 		if detailModel.IsDeletionRequested() {
 			// Show confirmation dialog
 			confirmDialog := confirm.NewConfirmDialog(selectedEntry.SiteName, selectedEntry.Filename, "delete", m.Options)
-			confirmProgram := tea.NewProgram(confirmDialog)
-
-			finalConfirmModel, err := confirmProgram.Run()
+			finalConfirmModel, err := ui.Run(confirmDialog)
 			if err != nil {
 				return false, fmt.Errorf("error running confirmation dialog: %v", err)
 			}
@@ -429,9 +419,7 @@ func (m *Menu) ChangeMasterPassword() (bool, error) {
 
 	// Show the change password form
 	changeForm := change.NewChangePasswordForm(m.Options)
-	p := tea.NewProgram(changeForm)
-
-	finalModel, err := p.Run()
+	finalModel, err := ui.Run(changeForm)
 	if err != nil {
 		return false, fmt.Errorf("error running change password form: %v", err)
 	}
