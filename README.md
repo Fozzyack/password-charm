@@ -1,20 +1,20 @@
 # Password Charm
 
-> **Personal Note**: This is a hobby project born out of frustration - I can never remember my passwords! 🤦‍♂️
+Password Charm is a personal project developed to simplify local password management.
 
 A terminal-based password manager built with [Bubble Tea](https://github.com/charmbracelet/bubbletea), Bubbles, and Lip Gloss. Password entries stay on your machine, encrypted using password-based OpenPGP through ProtonMail's [GopenPGP](https://github.com/ProtonMail/gopenpgp) library.
 
-## ✨ What it does
+## Features
 
 - **Local encrypted storage** - passwords and entry metadata are encrypted before being written to disk
-- **Easy to use** - simple keyboard navigation through menus
+- **Keyboard-driven interface** - navigate menus, forms, and password entries from the terminal
 - **Add new passwords** - save a site/service name and password, with optional username, email, and URL
 - **View your passwords** - browse entries, reveal passwords, and see a basic password-strength rating and creation timestamp
-- **Delete old passwords** - with confirmation to prevent accidents
+- **Delete entries** - confirmation is required before an entry is removed
 - **Change master password** - verify your current password and set a new login password
-- **Master password protection** - one password to access everything
+- **Master password authentication** - access the password store with a single login password
 
-## 🚀 Quick Start
+## Getting Started
 
 ### Requirements
 
@@ -24,7 +24,7 @@ A terminal-based password manager built with [Bubble Tea](https://github.com/cha
 
 Encryption runs inside the application; a separate GPG installation or key pair is not required.
 
-### Build and run
+### Build and Run
 
 1. **Clone and build**:
    ```bash
@@ -32,28 +32,30 @@ Encryption runs inside the application; a separate GPG installation or key pair 
    cd password-charm
    go build -o password-manager .
    ```
-2. **Run it**:
+2. **Run the application**:
    ```bash
    ./password-manager
    ```
 
 You can also run from the repository with `go run .`. Go downloads the required dependencies on the first build or run.
 
-## 📖 How to Use
+## Usage
 
-### First Time
-1. Create a master password (8+ characters)
-2. Create a random validation phrase (12+ characters). The app encrypts this phrase to check your master password on future logins.
+### Initial Setup
+
+1. Create a master password of at least 8 characters.
+2. Create a random validation phrase of at least 12 characters. The application encrypts this phrase to verify your master password on subsequent logins.
 3. Enter your master password again to log in.
 4. Choose **Add New Password** to save your first entry.
 
 ### Daily Use
-1. Enter your master password
+
+1. Enter your master password to log in.
 2. Choose **Add New Password** to enter a site/service name and password. Username, email, and URL are optional. Press Enter on the final field to save.
 3. Choose **List All Passwords**, then select an entry to see its details. Passwords are hidden by default; press `v` or Space to reveal or hide them.
 4. Press `d` in the detail view to request deletion, then confirm or cancel.
 
-## ⌨️ Keyboard Shortcuts
+## Keyboard Shortcuts
 
 | Screen | Keys | Action |
 | --- | --- | --- |
@@ -70,17 +72,16 @@ You can also run from the repository with `go run .`. Go downloads the required 
 | Password list | Esc, `q`, or Ctrl+C | Return to the main menu |
 | Main menu and login | Esc or Ctrl+C | Quit the application |
 
+## Planned Features
 
-## 📝 To Be Added
+- **Password export** - export entries in CSV or JSON format
+- **GitHub backup (under consideration)** - back up encrypted entries to a private repository
 
-- **📤 Export Passwords**: Export to CSV/JSON formats
-- **🔗 Maybe: GitHub Backup**: Encrypted backup to private repos
+The **Export Passwords** menu option is a placeholder and is not yet implemented.
 
-The **Export Passwords** menu option currently displays a coming-soon message.
+## Encryption and Storage
 
-## 🔒 Security
-
-- Everything stays on your computer (no internet required)
+- Password data is stored locally; application use does not require an internet connection
 - Uses password-based OpenPGP encryption with GopenPGP's RFC 9580 profile
 - Passwords, usernames, email addresses, URLs, and timestamps are encrypted together in ASCII-armored `.gpg` files
 - Site/service names are used to generate filenames and remain visible on disk
