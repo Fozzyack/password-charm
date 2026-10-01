@@ -1,6 +1,6 @@
 module github.com/Fozzyack/password-manager
 
-go 1.24.6
+go 1.27.1
 
 require (
 	github.com/ProtonMail/gopenpgp/v3 v3.3.0

@@ -20,7 +20,7 @@ A terminal-based password manager built with [Bubble Tea](https://github.com/cha
 
 ### Requirements
 
-- **Go 1.24.6 or later** to build from source
+- **Go 1.27.1 or later** to build from source
 - **Git** to clone the repository and use GitHub backup or restore
 - A terminal that supports ANSI colors and keyboard input
 
