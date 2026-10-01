@@ -9,16 +9,16 @@ import (
 	"github.com/ProtonMail/gopenpgp/v3/crypto"
 	"github.com/ProtonMail/gopenpgp/v3/profile"
 
-	"github.com/Fozzyack/password-manager/fileio"
+	"github.com/Fozzyack/password-manager/internal/fileio"
 )
 
 // Data represents a password entry with associated metadata.
 // All fields are JSON-serialized before encryption for secure storage.
 type Data struct {
-	Password  string    `json:"password"`  // The actual password or secret data
-	Username  string    `json:"username"`  // Associated username (optional)
-	Email     string    `json:"email"`     // Associated email address (optional)
-	URL       string    `json:"url"`       // Associated website URL (optional)
+	Password  string    `json:"password"`   // The actual password or secret data
+	Username  string    `json:"username"`   // Associated username (optional)
+	Email     string    `json:"email"`      // Associated email address (optional)
+	URL       string    `json:"url"`        // Associated website URL (optional)
 	CreatedAt time.Time `json:"created_at"` // Timestamp when entry was created
 	UpdatedAt time.Time `json:"updated_at"` // Timestamp when entry was last modified
 }
@@ -27,7 +27,7 @@ type Data struct {
 // using the master password from the password folder.
 type EncryptionFunctions struct {
 	passwordFolder  *fileio.PasswordFolder // Reference to the password store
-	EnteredPassword string                  // Currently unused, may be removed
+	EnteredPassword string                 // Currently unused, may be removed
 }
 
 // NewEncryption creates a new EncryptionFunctions instance with the given password folder.
@@ -85,12 +85,12 @@ func (ef *EncryptionFunctions) EncryptPasswordAndWriteToFile(fileName string, da
 	return nil
 }
 
-func (ef *EncryptionFunctions) DecryptPasswordFromFile (fileName string) (Data, error) {
+func (ef *EncryptionFunctions) DecryptPasswordFromFile(fileName string) (Data, error) {
 
 	data := Data{}
 	fileData, err := ef.passwordFolder.ReadFromFile(fileName)
 	if err != nil {
-		return data, err 
+		return data, err
 	}
 	password := []byte(ef.passwordFolder.Password)
 	pgp := crypto.PGPWithProfile(profile.RFC9580())

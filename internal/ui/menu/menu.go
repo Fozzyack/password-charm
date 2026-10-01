@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/Fozzyack/password-manager/types"
+	"github.com/Fozzyack/password-manager/internal/types"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 )
@@ -21,50 +21,50 @@ type MenuItem struct {
 
 // MenuModel represents the state of the main menu interface
 type MenuModel struct {
-	choices      []MenuItem      // Available menu options
-	cursor       int             // Currently selected menu item index
-	selected     bool            // Whether an item has been selected
-	selectedItem string          // The action identifier of the selected item
-	options      *types.Options  // Shared application options
+	choices      []MenuItem     // Available menu options
+	cursor       int            // Currently selected menu item index
+	selected     bool           // Whether an item has been selected
+	selectedItem string         // The action identifier of the selected item
+	options      *types.Options // Shared application options
 }
 
 // Menu styling with Lipgloss
 var (
 	titleStyle = lipgloss.NewStyle().
-		Bold(true).
-		Foreground(lipgloss.Color("#7D56F4")).
-		Padding(1, 2).
-		Border(lipgloss.RoundedBorder()).
-		BorderForeground(lipgloss.Color("#7D56F4")).
-		Align(lipgloss.Center)
+			Bold(true).
+			Foreground(lipgloss.Color("#7D56F4")).
+			Padding(1, 2).
+			Border(lipgloss.RoundedBorder()).
+			BorderForeground(lipgloss.Color("#7D56F4")).
+			Align(lipgloss.Center)
 
 	menuStyle = lipgloss.NewStyle().
-		Padding(1, 2).
-		Margin(1, 0).
-		Border(lipgloss.RoundedBorder()).
-		BorderForeground(lipgloss.Color("#7D56F4")).
-		Width(60).
-		Align(lipgloss.Left)
+			Padding(1, 2).
+			Margin(1, 0).
+			Border(lipgloss.RoundedBorder()).
+			BorderForeground(lipgloss.Color("#7D56F4")).
+			Width(60).
+			Align(lipgloss.Left)
 
 	selectedItemStyle = lipgloss.NewStyle().
-		Background(lipgloss.Color("#7D56F4")).
-		Foreground(lipgloss.Color("#FFFFFF")).
-		Bold(true).
-		Padding(0, 1)
+				Background(lipgloss.Color("#7D56F4")).
+				Foreground(lipgloss.Color("#FFFFFF")).
+				Bold(true).
+				Padding(0, 1)
 
 	itemStyle = lipgloss.NewStyle().
-		Padding(0, 1)
+			Padding(0, 1)
 
 	helpTextStyle = lipgloss.NewStyle().
-		Foreground(lipgloss.Color("#626262")).
-		Italic(true).
-		Align(lipgloss.Center).
-		Margin(1, 0)
+			Foreground(lipgloss.Color("#626262")).
+			Italic(true).
+			Align(lipgloss.Center).
+			Margin(1, 0)
 
 	containerStyle = lipgloss.NewStyle().
-		Padding(2, 4).
-		Margin(1, 2).
-		Align(lipgloss.Center)
+			Padding(2, 4).
+			Margin(1, 2).
+			Align(lipgloss.Center)
 )
 
 // InitialMenuModel creates a new menu model with predefined password management options
@@ -149,7 +149,7 @@ func (m MenuModel) View() string {
 	// Menu items with consistent width to prevent shifting
 	menuContent := ""
 	itemWidth := 52 // Account for padding inside the border
-	
+
 	for i, choice := range m.choices {
 		cursor := " " // no cursor
 		if m.cursor == i {

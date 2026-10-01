@@ -5,10 +5,10 @@ package main
 import (
 	"fmt"
 
-	"github.com/Fozzyack/password-manager/encryption"
-	"github.com/Fozzyack/password-manager/fileio"
-	"github.com/Fozzyack/password-manager/menus"
-	"github.com/Fozzyack/password-manager/types"
+	"github.com/Fozzyack/password-manager/internal/encryption"
+	"github.com/Fozzyack/password-manager/internal/fileio"
+	"github.com/Fozzyack/password-manager/internal/menus"
+	"github.com/Fozzyack/password-manager/internal/types"
 )
 
 // main is the application entry point. It initializes the password store,
@@ -20,18 +20,18 @@ func main() {
 	passwordFolder := fileio.InitPasswordFolder()
 	var err error
 
-	for file := range(passwordFolder.Dirs) {
+	for file := range passwordFolder.Dirs {
 		fmt.Println(passwordFolder.Dirs[file])
 	}
 	fmt.Println(passwordFolder.InitCheck)
 	options := &types.Options{
-		Quit : false,
-		LoggedIn: false,
+		Quit:         false,
+		LoggedIn:     false,
 		ErrorMessage: "",
 	}
 	encrypt := encryption.NewEncryption(passwordFolder)
 	menu := menus.InitMenus(passwordFolder, encrypt, options)
-	for !options.LoggedIn && !options.Quit{
+	for !options.LoggedIn && !options.Quit {
 		options.LoggedIn, err = menu.Login()
 		if err != nil {
 			panic(err)
@@ -60,7 +60,7 @@ func main() {
 
 		// Handle the selected action
 		handleMenuAction(action, menu)
-		
+
 		// Check if user wants to quit
 		if action == "quit" || options.Quit {
 			fmt.Print("\033[2J\033[H") // Clear screen

@@ -13,12 +13,12 @@ import (
 
 // PasswordOptions configures password generation parameters
 type PasswordOptions struct {
-	Length            int  // Password length (8-64)
-	IncludeUppercase  bool // Include A-Z
-	IncludeLowercase  bool // Include a-z
-	IncludeNumbers    bool // Include 0-9
-	IncludeSymbols    bool // Include special symbols
-	ExcludeAmbiguous  bool // Exclude ambiguous characters like 0, O, l, I
+	Length           int  // Password length (8-64)
+	IncludeUppercase bool // Include A-Z
+	IncludeLowercase bool // Include a-z
+	IncludeNumbers   bool // Include 0-9
+	IncludeSymbols   bool // Include special symbols
+	ExcludeAmbiguous bool // Exclude ambiguous characters like 0, O, l, I
 }
 
 // Character sets for password generation
@@ -33,12 +33,12 @@ const (
 // DefaultPasswordOptions returns sensible default options for password generation
 func DefaultPasswordOptions() PasswordOptions {
 	return PasswordOptions{
-		Length:            16,
-		IncludeUppercase:  true,
-		IncludeLowercase:  true,
-		IncludeNumbers:    true,
-		IncludeSymbols:    true,
-		ExcludeAmbiguous:  true,
+		Length:           16,
+		IncludeUppercase: true,
+		IncludeLowercase: true,
+		IncludeNumbers:   true,
+		IncludeSymbols:   true,
+		ExcludeAmbiguous: true,
 	}
 }
 
@@ -103,7 +103,7 @@ func GeneratePassword(opts PasswordOptions) (string, error) {
 
 	// Generate password
 	password := make([]byte, opts.Length)
-	
+
 	// First, place guaranteed characters
 	for i, char := range guaranteedChars {
 		if i < len(password) {
@@ -167,7 +167,7 @@ func shuffleBytes(slice []byte) error {
 // EvaluatePasswordStrength returns a strength score (0-4) and description for a password
 func EvaluatePasswordStrength(password string) (int, string) {
 	score := 0
-	
+
 	// Length check
 	if len(password) >= 8 {
 		score++
@@ -197,7 +197,7 @@ func EvaluatePasswordStrength(password string) (int, string) {
 
 	descriptions := []string{
 		"Very Weak",
-		"Weak", 
+		"Weak",
 		"Fair",
 		"Good",
 		"Strong",
@@ -212,18 +212,18 @@ func GenerateFilename(siteName string) string {
 	reg := regexp.MustCompile(`[^a-zA-Z0-9\-_]`)
 	cleanName := reg.ReplaceAllString(siteName, "_")
 	cleanName = strings.ToLower(cleanName)
-	
+
 	// Limit length
 	if len(cleanName) > 20 {
 		cleanName = cleanName[:20]
 	}
-	
+
 	// Add timestamp for uniqueness
 	timestamp := time.Now().Format("20060102_150405")
-	
+
 	// Combine name and timestamp
 	filename := fmt.Sprintf("%s_%s", cleanName, timestamp)
-	
+
 	return filename
 }
 
@@ -232,10 +232,10 @@ func SanitizeInput(input string) string {
 	// Remove control characters and normalize whitespace
 	reg := regexp.MustCompile(`[\x00-\x1F\x7F]`)
 	sanitized := reg.ReplaceAllString(input, "")
-	
+
 	// Normalize whitespace
 	sanitized = strings.TrimSpace(sanitized)
-	
+
 	return sanitized
 }
 
@@ -245,14 +245,14 @@ func ParseFilenameToSiteName(filename string) string {
 	if strings.HasSuffix(filename, ".gpg") {
 		filename = strings.TrimSuffix(filename, ".gpg")
 	}
-	
+
 	// Find the last underscore (timestamp separator)
 	lastUnderscore := strings.LastIndex(filename, "_")
 	if lastUnderscore == -1 {
 		// No timestamp found, return as is with underscores replaced by spaces
 		return strings.ReplaceAll(filename, "_", " ")
 	}
-	
+
 	// Check if what follows the last underscore looks like a timestamp
 	potentialTimestamp := filename[lastUnderscore+1:]
 	if len(potentialTimestamp) == 15 && strings.Contains(potentialTimestamp, "_") {
@@ -260,7 +260,7 @@ func ParseFilenameToSiteName(filename string) string {
 		siteName := filename[:lastUnderscore]
 		return strings.ReplaceAll(siteName, "_", " ")
 	}
-	
+
 	// No valid timestamp found, return as is with underscores replaced
 	return strings.ReplaceAll(filename, "_", " ")
 }
@@ -268,28 +268,28 @@ func ParseFilenameToSiteName(filename string) string {
 // FormatTimestampForDisplay formats a time.Time for user-friendly display
 func FormatTimestampForDisplay(t time.Time) string {
 	now := time.Now()
-	
+
 	// If it's today, show time
 	if t.Format("2006-01-02") == now.Format("2006-01-02") {
 		return "Today " + t.Format("3:04 PM")
 	}
-	
+
 	// If it's yesterday, show "Yesterday"
 	yesterday := now.AddDate(0, 0, -1)
 	if t.Format("2006-01-02") == yesterday.Format("2006-01-02") {
 		return "Yesterday " + t.Format("3:04 PM")
 	}
-	
+
 	// If it's within a week, show day name
 	if now.Sub(t).Hours() < 7*24 {
 		return t.Format("Monday 3:04 PM")
 	}
-	
+
 	// If it's within this year, show month and day
 	if t.Year() == now.Year() {
 		return t.Format("Jan 2, 3:04 PM")
 	}
-	
+
 	// Otherwise show full date
 	return t.Format("Jan 2, 2006")
 }

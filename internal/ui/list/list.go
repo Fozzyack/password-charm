@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/Fozzyack/password-manager/types"
+	"github.com/Fozzyack/password-manager/internal/types"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 )
@@ -33,44 +33,44 @@ type ListModel struct {
 // List styling
 var (
 	listTitleStyle = lipgloss.NewStyle().
-		Bold(true).
-		Foreground(lipgloss.Color("#7D56F4")).
-		Padding(1, 2).
-		Border(lipgloss.RoundedBorder()).
-		BorderForeground(lipgloss.Color("#7D56F4")).
-		Align(lipgloss.Center)
+			Bold(true).
+			Foreground(lipgloss.Color("#7D56F4")).
+			Padding(1, 2).
+			Border(lipgloss.RoundedBorder()).
+			BorderForeground(lipgloss.Color("#7D56F4")).
+			Align(lipgloss.Center)
 
 	listContainerStyle = lipgloss.NewStyle().
-		Padding(1, 2).
-		Margin(1, 2).
-		Border(lipgloss.RoundedBorder()).
-		BorderForeground(lipgloss.Color("#7D56F4")).
-		Width(80).
-		Align(lipgloss.Left)
+				Padding(1, 2).
+				Margin(1, 2).
+				Border(lipgloss.RoundedBorder()).
+				BorderForeground(lipgloss.Color("#7D56F4")).
+				Width(80).
+				Align(lipgloss.Left)
 
 	listItemStyle = lipgloss.NewStyle().
-		Padding(0, 2).
-		Margin(0, 0, 1, 0)
+			Padding(0, 2).
+			Margin(0, 0, 1, 0)
 
 	selectedItemStyle = lipgloss.NewStyle().
-		Padding(0, 2).
-		Margin(0, 0, 1, 0).
-		Background(lipgloss.Color("#7D56F4")).
-		Foreground(lipgloss.Color("#FFFFFF")).
-		Bold(true)
+				Padding(0, 2).
+				Margin(0, 0, 1, 0).
+				Background(lipgloss.Color("#7D56F4")).
+				Foreground(lipgloss.Color("#FFFFFF")).
+				Bold(true)
 
 	listHelpStyle = lipgloss.NewStyle().
-		Foreground(lipgloss.Color("#626262")).
-		PaddingLeft(4).
-		Italic(true).
-		Align(lipgloss.Center).
-		Margin(1, 0)
+			Foreground(lipgloss.Color("#626262")).
+			PaddingLeft(4).
+			Italic(true).
+			Align(lipgloss.Center).
+			Margin(1, 0)
 
 	emptyListStyle = lipgloss.NewStyle().
-		Foreground(lipgloss.Color("#626262")).
-		Italic(true).
-		Align(lipgloss.Center).
-		Padding(4, 2)
+			Foreground(lipgloss.Color("#626262")).
+			Italic(true).
+			Align(lipgloss.Center).
+			Padding(4, 2)
 )
 
 // NewPasswordList creates a new password list with the given entries
@@ -148,18 +148,18 @@ func (m ListModel) View() string {
 
 	// List content
 	listContent := ""
-	
+
 	// Add header
 	headerStyle := lipgloss.NewStyle().
 		Bold(true).
 		Foreground(lipgloss.Color("#7D56F4")).
 		Padding(0, 2).
 		Margin(0, 0, 1, 0)
-	
-	listContent += headerStyle.Render(fmt.Sprintf("%-25s %-20s %-15s %s", 
+
+	listContent += headerStyle.Render(fmt.Sprintf("%-25s %-20s %-15s %s",
 		"Site/Service", "Username", "Email", "Created"))
 	listContent += "\n"
-	
+
 	// Add separator
 	separatorStyle := lipgloss.NewStyle().
 		Foreground(lipgloss.Color("#626262"))
@@ -172,27 +172,27 @@ func (m ListModel) View() string {
 		if len(siteName) > 24 {
 			siteName = siteName[:21] + "..."
 		}
-		
+
 		username := entry.Username
 		if len(username) > 19 {
 			username = username[:16] + "..."
 		}
-		
+
 		email := entry.Email
 		if len(email) > 14 {
 			email = email[:11] + "..."
 		}
-		
+
 		createdAt := entry.CreatedAt.Format("Jan 02, 2006")
-		
-		entryText := fmt.Sprintf("%-25s %-20s %-15s %s", 
+
+		entryText := fmt.Sprintf("%-25s %-20s %-15s %s",
 			siteName, username, email, createdAt)
 
 		// Apply styling based on cursor position
 		if i == m.cursor {
-			listContent += selectedItemStyle.Render("► " + entryText) + "\n"
+			listContent += selectedItemStyle.Render("► "+entryText) + "\n"
 		} else {
-			listContent += listItemStyle.Render("  " + entryText) + "\n"
+			listContent += listItemStyle.Render("  "+entryText) + "\n"
 		}
 	}
 

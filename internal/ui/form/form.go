@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/Fozzyack/password-manager/types"
+	"github.com/Fozzyack/password-manager/internal/types"
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
@@ -34,41 +34,41 @@ type FormModel struct {
 // Form styling
 var (
 	formTitleStyle = lipgloss.NewStyle().
-		Bold(true).
-		Foreground(lipgloss.Color("#7D56F4")).
-		Padding(1, 2).
-		Border(lipgloss.RoundedBorder()).
-		BorderForeground(lipgloss.Color("#7D56F4")).
-		Align(lipgloss.Center)
+			Bold(true).
+			Foreground(lipgloss.Color("#7D56F4")).
+			Padding(1, 2).
+			Border(lipgloss.RoundedBorder()).
+			BorderForeground(lipgloss.Color("#7D56F4")).
+			Align(lipgloss.Center)
 
 	formContainerStyle = lipgloss.NewStyle().
-		Padding(2, 4).
-		Margin(1, 2).
-		Border(lipgloss.RoundedBorder()).
-		BorderForeground(lipgloss.Color("#7D56F4")).
-		Width(70).
-		Align(lipgloss.Left)
+				Padding(2, 4).
+				Margin(1, 2).
+				Border(lipgloss.RoundedBorder()).
+				BorderForeground(lipgloss.Color("#7D56F4")).
+				Width(70).
+				Align(lipgloss.Left)
 
 	fieldLabelStyle = lipgloss.NewStyle().
-		Bold(true).
-		Foreground(lipgloss.Color("#7D56F4")).
-		Margin(0, 0, 0, 1)
+			Bold(true).
+			Foreground(lipgloss.Color("#7D56F4")).
+			Margin(0, 0, 0, 1)
 
 	requiredStyle = lipgloss.NewStyle().
-		Foreground(lipgloss.Color("#FF5F87")).
-		Bold(true)
+			Foreground(lipgloss.Color("#FF5F87")).
+			Bold(true)
 
 	helpStyle = lipgloss.NewStyle().
-		Foreground(lipgloss.Color("#626262")).
-		Italic(true).
-		Align(lipgloss.Center).
-		Margin(1, 0)
+			Foreground(lipgloss.Color("#626262")).
+			Italic(true).
+			Align(lipgloss.Center).
+			Margin(1, 0)
 
 	errorStyle = lipgloss.NewStyle().
-		Foreground(lipgloss.Color("#FF5F87")).
-		Bold(true).
-		Align(lipgloss.Left).
-		Margin(0, 0, 1, 1)
+			Foreground(lipgloss.Color("#FF5F87")).
+			Bold(true).
+			Align(lipgloss.Left).
+			Margin(0, 0, 1, 1)
 )
 
 // NewPasswordForm creates a new password entry form with predefined fields
@@ -240,7 +240,7 @@ func (m FormModel) View() string {
 	if !m.validateForm() && m.currentField == len(m.inputs)-1 {
 		errorMsg = m.getValidationError()
 		if errorMsg != "" {
-			formContent += errorStyle.Render("❌ " + errorMsg) + "\n\n"
+			formContent += errorStyle.Render("❌ "+errorMsg) + "\n\n"
 		}
 	}
 

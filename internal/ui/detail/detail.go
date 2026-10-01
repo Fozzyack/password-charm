@@ -6,9 +6,9 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/Fozzyack/password-manager/encryption"
-	"github.com/Fozzyack/password-manager/types"
-	"github.com/Fozzyack/password-manager/utils"
+	"github.com/Fozzyack/password-manager/internal/encryption"
+	"github.com/Fozzyack/password-manager/internal/types"
+	"github.com/Fozzyack/password-manager/internal/utils"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 )
@@ -26,57 +26,57 @@ type DetailModel struct {
 // Detail view styling
 var (
 	detailTitleStyle = lipgloss.NewStyle().
-		Bold(true).
-		Foreground(lipgloss.Color("#7D56F4")).
-		Padding(1, 2).
-		Border(lipgloss.RoundedBorder()).
-		BorderForeground(lipgloss.Color("#7D56F4")).
-		Align(lipgloss.Center)
+				Bold(true).
+				Foreground(lipgloss.Color("#7D56F4")).
+				Padding(1, 2).
+				Border(lipgloss.RoundedBorder()).
+				BorderForeground(lipgloss.Color("#7D56F4")).
+				Align(lipgloss.Center)
 
 	detailContainerStyle = lipgloss.NewStyle().
-		Padding(2, 4).
-		Margin(1, 2).
-		Border(lipgloss.RoundedBorder()).
-		BorderForeground(lipgloss.Color("#7D56F4")).
-		Width(70).
-		Align(lipgloss.Left)
+				Padding(2, 4).
+				Margin(1, 2).
+				Border(lipgloss.RoundedBorder()).
+				BorderForeground(lipgloss.Color("#7D56F4")).
+				Width(70).
+				Align(lipgloss.Left)
 
 	fieldLabelStyle = lipgloss.NewStyle().
-		Bold(true).
-		Foreground(lipgloss.Color("#7D56F4")).
-		Width(15).
-		Align(lipgloss.Right)
+			Bold(true).
+			Foreground(lipgloss.Color("#7D56F4")).
+			Width(15).
+			Align(lipgloss.Right)
 
 	fieldValueStyle = lipgloss.NewStyle().
-		Foreground(lipgloss.Color("#FFFFFF")).
-		Padding(0, 1)
+			Foreground(lipgloss.Color("#FFFFFF")).
+			Padding(0, 1)
 
 	passwordHiddenStyle = lipgloss.NewStyle().
-		Foreground(lipgloss.Color("#626262")).
-		Italic(true).
-		Padding(0, 1)
+				Foreground(lipgloss.Color("#626262")).
+				Italic(true).
+				Padding(0, 1)
 
 	passwordVisibleStyle = lipgloss.NewStyle().
-		Foreground(lipgloss.Color("#FFFFFF")).
-		Background(lipgloss.Color("#333333")).
-		Padding(0, 1).
-		Bold(true)
+				Foreground(lipgloss.Color("#FFFFFF")).
+				Background(lipgloss.Color("#333333")).
+				Padding(0, 1).
+				Bold(true)
 
 	strengthStyle = lipgloss.NewStyle().
-		Padding(0, 1).
-		Bold(true)
+			Padding(0, 1).
+			Bold(true)
 
 	detailHelpStyle = lipgloss.NewStyle().
-		Foreground(lipgloss.Color("#626262")).
-		PaddingLeft(4).
-		Italic(true).
-		Align(lipgloss.Center).
-		Margin(1, 0)
+			Foreground(lipgloss.Color("#626262")).
+			PaddingLeft(4).
+			Italic(true).
+			Align(lipgloss.Center).
+			Margin(1, 0)
 
 	timestampStyle = lipgloss.NewStyle().
-		Foreground(lipgloss.Color("#626262")).
-		Italic(true).
-		Padding(0, 1)
+			Foreground(lipgloss.Color("#626262")).
+			Italic(true).
+			Padding(0, 1)
 )
 
 // NewPasswordDetail creates a new password detail view
@@ -138,24 +138,24 @@ func (m DetailModel) View() string {
 	detailContent := ""
 
 	// Site/Service Name
-	detailContent += fieldLabelStyle.Render("Site/Service:") + 
+	detailContent += fieldLabelStyle.Render("Site/Service:") +
 		fieldValueStyle.Render(m.siteName) + "\n\n"
 
 	// Username
 	if m.entry.Username != "" {
-		detailContent += fieldLabelStyle.Render("Username:") + 
+		detailContent += fieldLabelStyle.Render("Username:") +
 			fieldValueStyle.Render(m.entry.Username) + "\n\n"
 	}
 
 	// Email
 	if m.entry.Email != "" {
-		detailContent += fieldLabelStyle.Render("Email:") + 
+		detailContent += fieldLabelStyle.Render("Email:") +
 			fieldValueStyle.Render(m.entry.Email) + "\n\n"
 	}
 
 	// URL
 	if m.entry.URL != "" {
-		detailContent += fieldLabelStyle.Render("URL:") + 
+		detailContent += fieldLabelStyle.Render("URL:") +
 			fieldValueStyle.Render(m.entry.URL) + "\n\n"
 	}
 
@@ -164,7 +164,7 @@ func (m DetailModel) View() string {
 	if m.showPassword {
 		passwordValue := passwordVisibleStyle.Render(m.entry.Password)
 		detailContent += passwordLabel + passwordValue + "\n"
-		
+
 		// Show password strength
 		strength, description := utils.EvaluatePasswordStrength(m.entry.Password)
 		var strengthColor string
@@ -178,7 +178,7 @@ func (m DetailModel) View() string {
 		case 4:
 			strengthColor = "#90EE90" // Light Green
 		}
-		
+
 		strengthText := strengthStyle.Copy().
 			Foreground(lipgloss.Color(strengthColor)).
 			Render(fmt.Sprintf("Strength: %s", description))
@@ -186,22 +186,22 @@ func (m DetailModel) View() string {
 	} else {
 		passwordValue := passwordHiddenStyle.Render("••••••••••••••••")
 		detailContent += passwordLabel + passwordValue + "\n"
-		detailContent += fieldLabelStyle.Render("") + 
+		detailContent += fieldLabelStyle.Render("") +
 			passwordHiddenStyle.Render("Press 'v' or Space to reveal password") + "\n\n"
 	}
 
 	// File information
 	detailContent += "─" + strings.Repeat("─", 60) + "\n\n"
-	
-	detailContent += fieldLabelStyle.Render("Filename:") + 
-		fieldValueStyle.Render(m.filename + ".gpg") + "\n\n"
+
+	detailContent += fieldLabelStyle.Render("Filename:") +
+		fieldValueStyle.Render(m.filename+".gpg") + "\n\n"
 
 	// Timestamps
-	detailContent += fieldLabelStyle.Render("Created:") + 
+	detailContent += fieldLabelStyle.Render("Created:") +
 		timestampStyle.Render(m.entry.CreatedAt.Format("Monday, January 2, 2006 at 3:04 PM")) + "\n\n"
 
 	if !m.entry.UpdatedAt.Equal(m.entry.CreatedAt) {
-		detailContent += fieldLabelStyle.Render("Updated:") + 
+		detailContent += fieldLabelStyle.Render("Updated:") +
 			timestampStyle.Render(m.entry.UpdatedAt.Format("Monday, January 2, 2006 at 3:04 PM")) + "\n\n"
 	}
 
@@ -214,7 +214,7 @@ func (m DetailModel) View() string {
 	} else {
 		helpText = "v/Space: Show Password • d: Delete • Esc/q/Backspace: Back to List • Enter: Back to List"
 	}
-	
+
 	help := detailHelpStyle.Render(helpText)
 	content.WriteString(help)
 

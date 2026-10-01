@@ -44,20 +44,20 @@ func FileExists(fileName string) bool {
 	return true
 }
 
-func getDir(passwordFolder *PasswordFolder) (error) {
+func getDir(passwordFolder *PasswordFolder) error {
 	passwordEncFolder := fmt.Sprintf("%s/.password-manager-store", os.Getenv("HOME"))
 	dirs, err := os.ReadDir(passwordEncFolder)
 	if os.IsNotExist(err) {
 		log.Println(".password-manager-store not found\nCreating new encrypted passwords folder")
 		os.Mkdir(passwordEncFolder, 0750)
 		dirs, err = os.ReadDir(passwordEncFolder)
-	} 
+	}
 	if err != nil {
 		log.Fatal("There was an error opening the file\n", err)
 		return err
 	}
 
-	_, err = os.ReadDir(fmt.Sprintf("%s/.checker", passwordEncFolder)) 
+	_, err = os.ReadDir(fmt.Sprintf("%s/.checker", passwordEncFolder))
 	if os.IsNotExist(err) {
 		log.Println("Initialising Checker")
 		os.Mkdir(fmt.Sprintf("%s/.checker", passwordEncFolder), 0750)
@@ -69,14 +69,12 @@ func getDir(passwordFolder *PasswordFolder) (error) {
 		passwordFolder.InitCheck = false
 	}
 
-
 	passwordFolder.Dirs = dirs
 	passwordFolder.FolderLocation = passwordEncFolder
-	return  nil
+	return nil
 }
 
-
-func (pf *PasswordFolder) WriteToFile (fileName string, input []byte) error {
+func (pf *PasswordFolder) WriteToFile(fileName string, input []byte) error {
 	err := os.WriteFile(fmt.Sprintf("%s/%s.gpg", pf.FolderLocation, fileName), input, 0666)
 	if err != nil {
 		log.Printf("ERROR: Writing to file: %s", err)
@@ -85,7 +83,7 @@ func (pf *PasswordFolder) WriteToFile (fileName string, input []byte) error {
 	return nil
 }
 
-func (pf *PasswordFolder) ReadFromFile (fileName string) ([]byte, error) {
+func (pf *PasswordFolder) ReadFromFile(fileName string) ([]byte, error) {
 	data, err := os.ReadFile(fmt.Sprintf("%s/%s.gpg", pf.FolderLocation, fileName))
 	if err != nil {
 		return nil, err
@@ -109,23 +107,17 @@ func (pf *PasswordFolder) RefreshDirectoryListing() error {
 // Returns an error if the file doesn't exist or if deletion fails.
 func (pf *PasswordFolder) DeleteFile(fileName string) error {
 	filePath := fmt.Sprintf("%s/%s.gpg", pf.FolderLocation, fileName)
-	
+
 	// Check if file exists before attempting deletion
 	if !FileExists(filePath) {
 		return fmt.Errorf("password file '%s.gpg' does not exist", fileName)
 	}
-	
+
 	// Attempt to delete the file
 	err := os.Remove(filePath)
 	if err != nil {
 		return fmt.Errorf("failed to delete password file '%s.gpg': %v", fileName, err)
 	}
-	
+
 	return nil
 }
-
-
-
-
-
-

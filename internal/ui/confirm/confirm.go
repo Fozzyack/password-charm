@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/Fozzyack/password-manager/types"
+	"github.com/Fozzyack/password-manager/internal/types"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 )
@@ -15,67 +15,67 @@ import (
 type ConfirmModel struct {
 	siteName  string
 	filename  string
-	action    string  // e.g., "delete", "remove"
+	action    string // e.g., "delete", "remove"
 	confirmed bool
 	cancelled bool
-	cursor    int     // 0 for No, 1 for Yes
+	cursor    int // 0 for No, 1 for Yes
 	options   *types.Options
 }
 
 // Confirmation dialog styling
 var (
 	confirmTitleStyle = lipgloss.NewStyle().
-		Bold(true).
-		Foreground(lipgloss.Color("#FF5F87")).
-		Padding(1, 2).
-		Border(lipgloss.RoundedBorder()).
-		BorderForeground(lipgloss.Color("#FF5F87")).
-		Align(lipgloss.Center)
+				Bold(true).
+				Foreground(lipgloss.Color("#FF5F87")).
+				Padding(1, 2).
+				Border(lipgloss.RoundedBorder()).
+				BorderForeground(lipgloss.Color("#FF5F87")).
+				Align(lipgloss.Center)
 
 	confirmContainerStyle = lipgloss.NewStyle().
-		Padding(2, 4).
-		Margin(1, 2).
-		Border(lipgloss.RoundedBorder()).
-		BorderForeground(lipgloss.Color("#FF5F87")).
-		Width(60).
-		Align(lipgloss.Center)
+				Padding(2, 4).
+				Margin(1, 2).
+				Border(lipgloss.RoundedBorder()).
+				BorderForeground(lipgloss.Color("#FF5F87")).
+				Width(60).
+				Align(lipgloss.Center)
 
 	warningStyle = lipgloss.NewStyle().
-		Foreground(lipgloss.Color("#FFD700")).
-		Bold(true).
-		Align(lipgloss.Center).
-		Margin(1, 0)
+			Foreground(lipgloss.Color("#FFD700")).
+			Bold(true).
+			Align(lipgloss.Center).
+			Margin(1, 0)
 
 	entryInfoStyle = lipgloss.NewStyle().
-		Foreground(lipgloss.Color("#FFFFFF")).
-		Padding(1, 2).
-		Margin(1, 0).
-		Border(lipgloss.RoundedBorder()).
-		BorderForeground(lipgloss.Color("#626262")).
-		Align(lipgloss.Center)
+			Foreground(lipgloss.Color("#FFFFFF")).
+			Padding(1, 2).
+			Margin(1, 0).
+			Border(lipgloss.RoundedBorder()).
+			BorderForeground(lipgloss.Color("#626262")).
+			Align(lipgloss.Center)
 
 	buttonStyle = lipgloss.NewStyle().
-		Foreground(lipgloss.Color("#FFFFFF")).
-		Background(lipgloss.Color("#626262")).
-		Padding(0, 3).
-		Margin(0, 1).
-		Border(lipgloss.RoundedBorder()).
-		BorderForeground(lipgloss.Color("#626262"))
+			Foreground(lipgloss.Color("#FFFFFF")).
+			Background(lipgloss.Color("#626262")).
+			Padding(0, 3).
+			Margin(0, 1).
+			Border(lipgloss.RoundedBorder()).
+			BorderForeground(lipgloss.Color("#626262"))
 
 	selectedButtonStyle = lipgloss.NewStyle().
-		Foreground(lipgloss.Color("#FFFFFF")).
-		Background(lipgloss.Color("#FF5F87")).
-		Padding(0, 3).
-		Margin(0, 1).
-		Border(lipgloss.RoundedBorder()).
-		BorderForeground(lipgloss.Color("#FF5F87")).
-		Bold(true)
+				Foreground(lipgloss.Color("#FFFFFF")).
+				Background(lipgloss.Color("#FF5F87")).
+				Padding(0, 3).
+				Margin(0, 1).
+				Border(lipgloss.RoundedBorder()).
+				BorderForeground(lipgloss.Color("#FF5F87")).
+				Bold(true)
 
 	confirmHelpStyle = lipgloss.NewStyle().
-		Foreground(lipgloss.Color("#626262")).
-		Italic(true).
-		Align(lipgloss.Center).
-		Margin(1, 0)
+				Foreground(lipgloss.Color("#626262")).
+				Italic(true).
+				Align(lipgloss.Center).
+				Margin(1, 0)
 )
 
 // NewConfirmDialog creates a new confirmation dialog

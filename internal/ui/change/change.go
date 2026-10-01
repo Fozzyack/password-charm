@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/Fozzyack/password-manager/types"
+	"github.com/Fozzyack/password-manager/internal/types"
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
@@ -23,60 +23,60 @@ const (
 
 // ChangeModel represents the state of the password change form
 type ChangeModel struct {
-	inputs        []textinput.Model
-	currentField  int
-	submitted     bool
-	cancelled     bool
-	options       *types.Options
-	currentPass   string
-	newPass       string
-	confirmPass   string
+	inputs       []textinput.Model
+	currentField int
+	submitted    bool
+	cancelled    bool
+	options      *types.Options
+	currentPass  string
+	newPass      string
+	confirmPass  string
 }
 
 // Form styling
 var (
 	changeTitleStyle = lipgloss.NewStyle().
-		Bold(true).
-		Foreground(lipgloss.Color("#7D56F4")).
-		Padding(1, 2).
-		Border(lipgloss.RoundedBorder()).
-		BorderForeground(lipgloss.Color("#7D56F4")).
-		Align(lipgloss.Center)
+				Bold(true).
+				Foreground(lipgloss.Color("#7D56F4")).
+				Padding(1, 2).
+				Border(lipgloss.RoundedBorder()).
+				BorderForeground(lipgloss.Color("#7D56F4")).
+				Align(lipgloss.Center)
 
 	changeContainerStyle = lipgloss.NewStyle().
-		Padding(2, 4).
-		Margin(1, 2).
-		Border(lipgloss.RoundedBorder()).
-		BorderForeground(lipgloss.Color("#7D56F4")).
-		Width(70).
-		Align(lipgloss.Left)
+				Padding(2, 4).
+				Margin(1, 2).
+				Border(lipgloss.RoundedBorder()).
+				BorderForeground(lipgloss.Color("#7D56F4")).
+				Width(70).
+				Align(lipgloss.Left)
 
 	changeFieldLabelStyle = lipgloss.NewStyle().
-		Bold(true).
-		Foreground(lipgloss.Color("#7D56F4")).
-		Margin(0, 0, 0, 1)
+				Bold(true).
+				Foreground(lipgloss.Color("#7D56F4")).
+				Margin(0, 0, 0, 1)
 
 	changeRequiredStyle = lipgloss.NewStyle().
-		Foreground(lipgloss.Color("#FF5F87")).
-		Bold(true)
+				Foreground(lipgloss.Color("#FF5F87")).
+				Bold(true)
 
 	changeHelpStyle = lipgloss.NewStyle().
-		Foreground(lipgloss.Color("#626262")).
-		Italic(true).
-		Align(lipgloss.Center).
-		Margin(1, 0)
+			Foreground(lipgloss.Color("#626262")).
+			Italic(true).
+			Align(lipgloss.Center).
+			Margin(1, 0)
 
 	changeErrorStyle = lipgloss.NewStyle().
-		Foreground(lipgloss.Color("#FF5F87")).
-		Bold(true).
-		Align(lipgloss.Left).
-		Margin(0, 0, 1, 1)
+				Foreground(lipgloss.Color("#FF5F87")).
+				Bold(true).
+				Align(lipgloss.Left).
+				Margin(0, 0, 1, 1)
 
 	changeSuccessStyle = lipgloss.NewStyle().
-		Foreground(lipgloss.Color("#90EE90")).
-		Bold(true).
-		Align(lipgloss.Center).
-		Margin(1, 0)
+				Foreground(lipgloss.Color("#90EE90")).
+				Bold(true).
+				Align(lipgloss.Center).
+				Margin(1, 0)
 )
 
 // NewChangePasswordForm creates a new master password change form
@@ -217,7 +217,7 @@ func (m ChangeModel) View() string {
 
 	// Validation errors
 	if errorMsg := m.getValidationError(); errorMsg != "" {
-		formContent += changeErrorStyle.Render("❌ " + errorMsg) + "\n\n"
+		formContent += changeErrorStyle.Render("❌ "+errorMsg) + "\n\n"
 	}
 
 	content.WriteString(changeContainerStyle.Render(formContent))
